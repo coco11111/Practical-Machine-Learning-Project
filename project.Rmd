@@ -70,7 +70,30 @@ testing0 <- predict(preProc,testing0a)
 ```
 
 ### 5. Model built
-We are using randomforest method to build the model.
+(1) decision tree
+```{r}
+modFit_rpart <- train(classe~.,method="rpart",data=training1a)
+predictions_rpart <- predict(modFit_rpart,newdata=training2a)
+result_rpart <-confusionMatrix(predictions_rpart,training2a$classe)$overall
+result_rpart
+```
+(2) ramdom forest
+```{r}
+library(randomForest)
+modFit_rf <- randomForest(classe ~ ., data = training1a)
+predictions_rf <- predict(modFit_rf,newdata=training2a)
+result_rf <-confusionMatrix(predictions_rf,training2a$classe)$overall
+result_rf
+```
+(3) Bayes
+```{r}
+modFit_lad <- train(classe~., data = training1a, method="lda")
+predictions_lad <- predict(modFit_lad,newdata=training2a)
+result_lad <-confusionMatrix(predictions_lad,training2a$classe)$overall
+result_lad 
+```
+
+The randomforest has the best accuracy and we are using randomforest method to build the model for the cross validation.
 ```{r}
 library(randomForest)
 modFit_rf <- randomForest(training1a$classe ~ ., data = training1)
@@ -88,3 +111,6 @@ testing0 <- testing0[-1,]
 predictions <- predict(modFit_rf,newdata=testing0,type="class")
 predictions
 ```
+
+### 7. Discussion
+The expected out of sample error might comes from the experiment design. For example, a factor might have influence to the result might be missing. We compared several models and choose the random forest to do the prediction because it has the best and remarkable accuracy among the models we tested. 
